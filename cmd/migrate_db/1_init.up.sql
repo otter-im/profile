@@ -7,7 +7,6 @@ CREATE TABLE profile
     website             varchar(255) NULL,
     pronouns            varchar(255) NULL,
     date_of_birth       timestamp    NULL,
-    avatar_content_type TEXT         NOT NULL DEFAULT 'image/png',
     avatar_url          TEXT         NOT NULL DEFAULT 'https://s3.otter.im/profile/default.png'
 );
 

@@ -18,15 +18,14 @@ var (
 type Profile struct {
 	tableName struct{} `json:"-" pg:"profile"`
 
-	UserID            uuid.UUID `json:"user_id" pg:"id"`
-	DisplayName       string    `json:"display_name" pg:"display_name"`
-	Description       string    `json:"description" pg:"description"`
-	Location          string    `json:"location" pg:"location"`
-	Website           string    `json:"website" pg:"website"`
-	Pronouns          string    `json:"pronouns" pg:"pronouns"`
-	DateOfBirth       time.Time `json:"date_of_birth" pg:"date_of_birth"`
-	AvatarContentType string    `json:"avatar_content_type" pg:"avatar_content_type"`
-	AvatarURL         string    `json:"avatar_url" pg:"avatar_url"`
+	UserID      uuid.UUID `json:"user_id" pg:"id"`
+	DisplayName string    `json:"display_name" pg:"display_name"`
+	Description string    `json:"description" pg:"description"`
+	Location    string    `json:"location" pg:"location"`
+	Website     string    `json:"website" pg:"website"`
+	Pronouns    string    `json:"pronouns" pg:"pronouns"`
+	DateOfBirth time.Time `json:"date_of_birth" pg:"date_of_birth"`
+	AvatarURL   string    `json:"avatar_url" pg:"avatar_url"`
 }
 
 type ProfileService interface {
