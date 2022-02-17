@@ -18,7 +18,7 @@ func ServiceHost() string {
 }
 
 func ServicePort() string {
-	return fmt.Sprintf("%v", envInt("SERVICE_PORT", 3000))
+	return fmt.Sprintf("%v", envInt("SERVICE_PORT", 3001))
 }
 
 func PostgresAddress() string {

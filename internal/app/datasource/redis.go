@@ -1,4 +1,4 @@
-package app
+package datasource
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func RedisCache() *cache.Cache {
 	return redisCache
 }
 
-func checkRedis() error {
+func CheckRedis() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 

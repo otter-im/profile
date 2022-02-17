@@ -2,6 +2,8 @@ package app
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/otter-im/profile/internal/app/datasource"
+	"github.com/otter-im/profile/internal/app/handler"
 	"github.com/otter-im/profile/internal/config"
 	"golang.org/x/exp/rand"
 	"log"
@@ -21,18 +23,33 @@ func Init() error {
 	rand.Seed(uint64(time.Now().UnixNano()))
 	mathRand.Seed(time.Now().UnixNano())
 
-	if err := checkPostgres(); err != nil {
+	if err := datasource.CheckPostgres(); err != nil {
 		return err
 	}
 
-	if err := checkRedis(); err != nil {
+	if err := datasource.CheckRedis(); err != nil {
 		return err
 	}
+
+	addExitHook(func() error {
+		if err := datasource.Postgres().Close(); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	addExitHook(func() error {
+		if err := datasource.RedisRing().Close(); err != nil {
+			return err
+		}
+		return nil
+	})
 	return nil
 }
 
 func Run() error {
 	router := mux.NewRouter()
+	router.HandleFunc("/profile/{id}", handler.ProfileGetHandler)
 
 	http.Handle("/", router)
 	addr := net.JoinHostPort(config.ServiceHost(), config.ServicePort())
@@ -50,6 +67,6 @@ func Exit() error {
 	return nil
 }
 
-func AddExitHook(hook func() error) {
+func addExitHook(hook func() error) {
 	exitHooks = append(exitHooks, hook)
 }

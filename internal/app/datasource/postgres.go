@@ -1,4 +1,4 @@
-package app
+package datasource
 
 import (
 	"context"
@@ -29,17 +29,11 @@ func Postgres() *pg.DB {
 		}
 
 		pgMain = pg.Connect(options)
-		AddExitHook(func() error {
-			if err := pgMain.Close(); err != nil {
-				return err
-			}
-			return nil
-		})
 	})
 	return pgMain
 }
 
-func checkPostgres() error {
+func CheckPostgres() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
