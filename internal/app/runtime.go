@@ -20,6 +20,14 @@ func Init() error {
 
 	rand.Seed(uint64(time.Now().UnixNano()))
 	mathRand.Seed(time.Now().UnixNano())
+
+	if err := checkPostgres(); err != nil {
+		return err
+	}
+
+	if err := checkRedis(); err != nil {
+		return err
+	}
 	return nil
 }
 

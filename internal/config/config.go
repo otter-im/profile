@@ -3,8 +3,10 @@ package config
 import (
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func ServiceEnvironment() string {
@@ -17,6 +19,48 @@ func ServiceHost() string {
 
 func ServicePort() string {
 	return fmt.Sprintf("%v", envInt("SERVICE_PORT", 3000))
+}
+
+func PostgresAddress() string {
+	return envString("POSTGRES_ADDRESS", "localhost:5432")
+}
+
+func PostgresUser() string {
+	return envString("POSTGRES_USER", "")
+}
+
+func PostgresPassword() string {
+	return envString("POSTGRES_PASSWORD", "")
+}
+
+func PostgresDatabase() string {
+	return envString("POSTGRES_DATABASE", "profile")
+}
+
+func PostgresSSL() bool {
+	return envBool("POSTGRES_SSL", false)
+}
+
+func RedisNodes() map[string]string {
+	nodes := envString("REDIS_NODES", "localhost:6379")
+	result := make(map[string]string)
+	for _, node := range strings.Split(nodes, ",") {
+		host, _, err := net.SplitHostPort(node)
+		if err != nil {
+			log.Print(err)
+			continue
+		}
+		result[host] = node
+	}
+	return result
+}
+
+func RedisPassword() string {
+	return envString("REDIS_PASSWORD", "")
+}
+
+func RedisDB() int {
+	return envInt("REDIS_DATABASE", 0)
 }
 
 func envString(key string, v string) string {
