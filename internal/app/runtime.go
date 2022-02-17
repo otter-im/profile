@@ -49,6 +49,7 @@ func Init() error {
 
 func Run() error {
 	router := mux.NewRouter()
+	router.HandleFunc("/profile", handler.ProfileDefaultHandler)
 	router.HandleFunc("/profile/{id}", handler.ProfileGetHandler)
 
 	http.Handle("/", router)
