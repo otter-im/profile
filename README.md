@@ -4,6 +4,6 @@ Profiles API
 
 ## License
 
-MIT License. Copyright (c) 2022 Otter Social. 
+AGPLv3 License.
 
 See the LICENCE file for the full terms.
