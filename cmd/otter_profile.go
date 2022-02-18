@@ -21,10 +21,4 @@ func main() {
 		log.Print(err)
 		os.Exit(-2)
 	}
-
-	err = app.Exit()
-	if err != nil {
-		log.Print(err)
-		os.Exit(-2)
-	}
 }

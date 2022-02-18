@@ -2,43 +2,39 @@ package datasource
 
 import (
 	"context"
-	"crypto/tls"
+	"database/sql"
 	"fmt"
-	"github.com/go-pg/pg/v10"
-	"github.com/otter-im/profile/internal/config"
+	_ "github.com/lib/pq"
+	"github.com/otter-im/profile/internal/app/config"
+	"log"
+	"os"
 	"sync"
 	"time"
 )
 
 var (
-	pgMainOnce sync.Once
-	pgMain     *pg.DB
+	dbPool   *sql.DB
+	poolOnce sync.Once
 )
 
-func Postgres() *pg.DB {
-	pgMainOnce.Do(func() {
-		options := &pg.Options{
-			Addr:     config.PostgresAddress(),
-			User:     config.PostgresUser(),
-			Password: config.PostgresPassword(),
-			Database: config.PostgresDatabase(),
+func DB() *sql.DB {
+	poolOnce.Do(func() {
+		db, err := sql.Open("postgres", config.Config().DatabaseURL)
+		if err != nil {
+			log.Printf("db establish failure: %v", err)
+			os.Exit(2)
 		}
-
-		if config.PostgresSSL() {
-			options.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-		}
-
-		pgMain = pg.Connect(options)
+		dbPool = db
 	})
-	return pgMain
+	return dbPool
 }
 
-func CheckPostgres() error {
+func CheckDB() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
 
-	if err := Postgres().Ping(ctx); err != nil {
-		return fmt.Errorf("postgresql connection failure: %v", err)
+	if err := DB().PingContext(ctx); err != nil {
+		return fmt.Errorf("db establish failure: %v", err)
 	}
 	return nil
 }

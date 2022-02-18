@@ -16,20 +16,18 @@ var (
 )
 
 type Profile struct {
-	tableName struct{} `json:"-" pg:"profile"`
-
-	UserID      uuid.UUID `json:"user_id" pg:"id"`
-	DisplayName string    `json:"display_name" pg:"display_name"`
-	Description string    `json:"description" pg:"description"`
-	Location    string    `json:"location" pg:"location"`
-	Website     string    `json:"website" pg:"website"`
-	Pronouns    string    `json:"pronouns" pg:"pronouns"`
-	DateOfBirth time.Time `json:"date_of_birth" pg:"date_of_birth"`
-	AvatarURL   string    `json:"avatar_url" pg:"avatar_url"`
+	UserID      uuid.UUID `json:"user_id"`
+	DisplayName *string   `json:"display_name,omitempty"`
+	Description *string   `json:"description,omitempty"`
+	Location    *string   `json:"location,omitempty"`
+	Website     *string   `json:"website,omitempty"`
+	Pronouns    *string   `json:"pronouns,omitempty"`
+	DateOfBirth time.Time `json:"date_of_birth,omitempty"`
+	AvatarURL   string    `json:"avatar_url"`
 }
 
 type ProfileService interface {
-	SelectProfile(ctx context.Context, id uuid.UUID) (*Profile, error)
+	SelectProfile(ctx context.Context, id string) (*Profile, error)
 }
 
 type profileDto struct{}
@@ -58,12 +56,12 @@ func (p *profileDto) SelectProfile(ctx context.Context, id uuid.UUID) (*Profile,
 }
 
 func selectProfile(ctx context.Context, id uuid.UUID) (*Profile, error) {
-	user := new(Profile)
-	if err := datasource.Postgres().
-		ModelContext(ctx, user).
-		Where("id = ?", id).
-		Select(); err != nil {
+	profile := new(Profile)
+	err := datasource.DB().
+		QueryRowContext(ctx, "SELECT * FROM profile WHERE id = $1", id).
+		Scan(&profile.UserID, &profile.DisplayName, &profile.Description, &profile.Location, &profile.Website, &profile.Pronouns, &profile.DateOfBirth, &profile.AvatarURL)
+	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	return profile, nil
 }

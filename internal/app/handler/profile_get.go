@@ -14,15 +14,15 @@ func ProfileDefaultHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("X-Otter-Login-User-Id")
 	if id == "" {
 		w.WriteHeader(http.StatusForbidden)
-		_, _ = fmt.Fprintf(w, "please login")
+		_, _ = fmt.Fprintln(w, "please login")
 		return
 	}
 	profileByIdHandler(w, r, id)
 }
 
-func ProfileGetHandler(w http.ResponseWriter, r *http.Request) {
+func ProfileByIdHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	profileByIdHandler(w, r, vars["id"])
+	profileByIdHandler(w, r, vars["user_id"])
 }
 
 func profileByIdHandler(w http.ResponseWriter, r *http.Request, userId string) {
